@@ -43,8 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\GenericEventArgs.cs" />
+    <Compile Include="Events\IPlayerEventArgs.cs" />
+    <Compile Include="Events\PeakEventArgs.cs" />
+    <Compile Include="Events\PlayEventArgs.cs" />
     <Compile Include="NAudioPlayer.cs" />
-    <Compile Include="PlayerEventsArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

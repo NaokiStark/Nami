@@ -5,16 +5,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Nami.Audio.Events;
+using System.Runtime.InteropServices;
 
 namespace Nami.Audio
 {
-    public class NAudioPlayer
+    public class NAudioPlayer : IDisposable
     {
 
         IWavePlayer waveOut;
         AudioFileReader audioFile;
         MeteringSampleProvider meterSampleProvider;
+
+        public delegate void AudioEventHandler(IPlayerEventArgs args);
+        public event AudioEventHandler OnPlay;
+        public event AudioEventHandler OnStop;
+        public event AudioEventHandler OnPause;
+        public event AudioEventHandler OnPeak;
 
         /// <summary>
         /// Position in milliseconds
@@ -45,9 +52,10 @@ namespace Nami.Audio
                 if(audioFile != null)
                 {
                     audioFile.Volume = value;
+                    _volume = value;
                 }
 
-                _volume = Volume;
+                _volume = value;
             }
         }
 
@@ -88,27 +96,63 @@ namespace Nami.Audio
 
         private void waveOut_PlaybackStopped(object sender, StoppedEventArgs e)
         {
-            
+            OnStop?.Invoke(new GenericEventArgs());
         }
 
         public void Play(string File)
         {
-            audioFile = new AudioFileReader(File);
-            meterSampleProvider = new MeteringSampleProvider(audioFile);
-            meterSampleProvider.SamplesPerNotification = 100;
-            meterSampleProvider.StreamVolume += MeterSampleProvider_StreamVolume;
+            try
+            {
+                if(waveOut != null)
+                {
+                    if(waveOut.PlaybackState != PlaybackState.Stopped)
+                    {
+                        waveOut.Stop();
+                        audioFile.Dispose();
+                        waveOut.Dispose();
+                    }
+                }
 
-            audioFile.Volume = _volume;
-            waveOut.Init(meterSampleProvider);
-            
-            waveOut.Play();
+                waveOut = new WasapiOut(NAudio.CoreAudioApi.AudioClientShareMode.Shared, 100);
+                audioFile = new AudioFileReader(File);
+                meterSampleProvider = new MeteringSampleProvider(audioFile);
+                meterSampleProvider.SamplesPerNotification = 100;
+                meterSampleProvider.StreamVolume += MeterSampleProvider_StreamVolume;
+
+                audioFile.Volume = _volume;
+                waveOut.Init(meterSampleProvider);
+                
+
+                waveOut.Play();
+                OnPlay?.Invoke(new PlayEventArgs { File = File });
+            }
+            catch (Exception ex)
+            {
+                
+                throw ex;
+            }
+           
         }
 
         private void MeterSampleProvider_StreamVolume(object sender, StreamVolumeEventArgs e)
         {
             PeakValueLeft = Normalize(e.MaxSampleValues[0]);
-            PeakValueRight = Normalize(e.MaxSampleValues[1]);
-        }
+
+            if(e.MaxSampleValues.Length > 1)
+            {
+                PeakValueRight = Normalize(e.MaxSampleValues[1]);
+            }
+            else
+            {
+                PeakValueRight = PeakValueLeft;
+            }
+
+            OnPeak?.Invoke(new PeakEventArgs {
+                Left = PeakValueLeft,
+                Right = PeakValueRight
+            });
+          
+        }       
 
         public void Play(FileInfo File)
         {
@@ -117,12 +161,25 @@ namespace Nami.Audio
 
         public void Stop()
         {
-
+            waveOut?.Stop();
+            
         }
 
         public void Pause()
         {
-
+            if (waveOut.PlaybackState != PlaybackState.Stopped)
+            {
+                if(waveOut.PlaybackState == PlaybackState.Paused)
+                {
+                    waveOut?.Play();
+                }
+                else
+                {
+                    waveOut?.Pause();
+                    OnPause?.Invoke(new GenericEventArgs());
+                }                
+                
+            }
         }
 
         /// <summary>
@@ -134,6 +191,16 @@ namespace Nami.Audio
         {
             if (Volume == 0) return 0;
             return ((value) * (1 / Volume));
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+
+            waveOut?.Stop();
+            waveOut?.Dispose();
         }
     }
 }
