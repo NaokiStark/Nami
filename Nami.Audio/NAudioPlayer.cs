@@ -83,8 +83,6 @@ namespace Nami.Audio
             set;
         }
 
-
-
         /// <summary>
         /// New Instance of NAudioPlayer
         /// </summary>

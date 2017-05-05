@@ -29,6 +29,8 @@ namespace Nami
         private void Player_OnPeak(IPlayerEventArgs args)
         {
             PeakEventArgs pArgs = (PeakEventArgs)args;
+            progressBar1.Value = (int)(pArgs.Left * 100);
+            progressBar2.Value = (int)(pArgs.Right * 100);
 
         }
 
