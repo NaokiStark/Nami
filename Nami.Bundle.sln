@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nami", "Nami\Nami.csproj", "{CCFF8229-A982-4647-905A-4EC41ACEC106}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nami.Audio", "Nami.Audio\Nami.Audio.csproj", "{165AD54F-BF4C-4649-915C-E8CFE3EAACE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nami.Automatization", "Nami.Automatization\Nami.Automatization.csproj", "{C9E838E7-BB6D-4B84-BE13-0BC62FF947DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{165AD54F-BF4C-4649-915C-E8CFE3EAACE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{165AD54F-BF4C-4649-915C-E8CFE3EAACE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{165AD54F-BF4C-4649-915C-E8CFE3EAACE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9E838E7-BB6D-4B84-BE13-0BC62FF947DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9E838E7-BB6D-4B84-BE13-0BC62FF947DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9E838E7-BB6D-4B84-BE13-0BC62FF947DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9E838E7-BB6D-4B84-BE13-0BC62FF947DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
